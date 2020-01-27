@@ -12,6 +12,7 @@ usage() {
  dk                 Kills all running docker containers
  drs                Removes all stopped docker containers
  ddi                Removes all dangling docker images
+ fp                 Kill processes running on a specific port
 "
 }
 
@@ -30,6 +31,21 @@ check_for_git () {
     exit
   fi;
   BRANCH=$(git symbolic-ref --short HEAD)
+}
+
+freeport () {
+  echo Attempting to stop all processes on port $1
+  processes=($(lsof -i TCP:$1 | grep LISTEN | awk '{print $2}'))
+  if [ ${#processes[@]} -gt 0 ]
+  then
+    for i in "${processes[@]}"
+    do
+      kill -9 $i
+      echo Stopped $i on port :$1
+    done
+  else
+    echo No processes found on port :$1
+  fi
 }
 
 if [ "$1" == "cm" ]; then
@@ -55,6 +71,13 @@ elif [ "$1" == "ddi" ]; then
 elif [ "$1" == "drs" ]; then
   # remove stoped docker containers
   docker rm $(docker ps -a -q)
+elif [ "$1" == "fp" ]; then
+  if [ ! $2]; then
+    echo "Must provide a port number to kill"
+    exit
+  fi;
+
+  freeport $2
 else
   echo "Must provide a command see --help for a list of commands"
 fi

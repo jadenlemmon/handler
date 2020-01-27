@@ -1,32 +1,34 @@
 <p align="center">
-  <a href="https://github.com/summit-series/event-app"><img src="./img/logo.png" width="200" alt="Logo"></a>
+  <a href="https://github.com/jlemm45/handy-commands"><img src="./img/logo.png" width="200" alt="Logo"></a>
 </p>
 
 <p align="center">
-   Handy Commands
-</p>
-
-<p align="center">
-  <a href="#badge"><img src="https://img.shields.io/badge/styled_with-prettier-ff69b4.svg" alt="styled with prettier"></a>
   <a href="#badge"><img src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg" alt="Conventional Commits"></a>
 </p>
 
 ### Handy Commands
 
-Small collection of handy commands. All commands executed under the `hc` namespace.
+Small collection of handy commands to make your life easier.
 
 ### Quick Install
 
-1. Clone Repo
-2. Add reference to `bash_profile` or `bashrc`
+1. Download or clone the repo
+2. Add reference to `bash_profile`, `bashrc`, or `.zshrc`
+
+### Setup
 
 ```
- #handy commands
- export PATH=$PATH:{Path to hc.sh in repo...}
- alias hc='hc.sh'
+ export PATH=$PATH:handy-commands/bin // The bin folder needs to be in your path
+ alias hc='handy' // Optional had some aliases
 ```
 
+### Commands
+
 ```
-// clears all local branches merged into current one
-hc cm
+ cm                 Clears all local branches merged into checkout out branch
+ u                  Updates current branch in repo from origin and installs dependencies
+ dk                 Kills all running docker containers
+ drs                Removes all stopped docker containers
+ ddi                Removes all dangling docker images
+ fp                 Kill processes running on a specific port
 ```
