@@ -1,0 +1,189 @@
+#!/bin/sh
+
+LOGO='
+   _   _                 _ _           
+  | | | |               | | |          
+  | |_| | __ _ _ __   __| | | ___ _ __ 
+  |  _  |/ _  |  _ \ / _  | |/ _ \  __|
+  | | | | (_| | | | | (_| | |  __/ |   
+  \_| |_/\__ _|_| |_|\__ _|_|\___|_|                                
+'
+
+COMMANDS='
+  hc [CMD] [ARGS]
+
+  Available Commands:
+
+  Git
+  cm      Clears all local branches merged into checkout out branch
+  u       Updates current branch in repo from origin and installs JS/PHP dependencies
+  
+  Docker
+  dk      Kills all running Docker containers
+  drs     Removes all stopped Docker containers
+  ddi     Removes all dangling Docker images
+  di      Removes all Docker images
+  fp      Kill processes running on a specific port
+  dp      Purges all Docker containers, images, and volumes - Nuclear option
+'
+
+# Print usage
+usage() {
+  echo "$LOGO \n $COMMANDS"
+} 
+
+for arg in "$@"
+do
+    if [ "$arg" == "--help" ] || [ "$arg" == "-h" ]
+    then
+        usage
+        exit
+    fi
+done
+
+log_success () {
+  GREEN=$'\e[0;32m'
+  echo "✅${GREEN} $1"
+}
+
+log_info () {
+  BLUE=$'\e[0;44m'
+  echo "${BLUE}$1"
+}
+
+log_error () {
+  RED=$'\e[0;41m'
+  echo "${RED}$1"
+}
+
+confirm_message () {
+  read -r -p "$1 [y/N] " response
+
+  if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    log_info "Canceled"
+    exit 1
+  fi
+}
+
+check_for_git () {
+  if [ ! -d .git ]; then
+    log_error 'Command can only be used in a GIT repository.'
+    exit
+  fi;
+  BRANCH=$(git symbolic-ref --short HEAD)
+}
+
+freeport () {
+  log_info "Attempting to stop all processes on port $1"
+  processes=($(lsof -i TCP:$1 | grep LISTEN | awk '{print $2}'))
+  if [ ${#processes[@]} -gt 0 ]
+  then
+    for i in "${processes[@]}"
+    do
+      kill -9 $i
+      log_success "Stopped $i on port :$1"
+    done
+  else
+    log_error "No processes found on port :$1"
+  fi
+}
+
+docker_kill_running_containers () {
+  count_countainers=$(docker ps -q $1 | wc -l)
+
+  if [ $count_countainers -gt 0 ]; then
+    docker kill $(docker ps -q)
+    log_success "Killed Running Containers"
+  else
+    log_info "No Containers to Kill"
+  fi
+}
+
+docker_remove_dangling_images () {
+  count_images=$(docker images -q -f dangling=true $1 | wc -l)
+
+  if [ $count_images -gt 0 ]; then
+    docker rmi $(docker images -q -f dangling=true)
+    log_success "Removed Dangling Images"
+  else
+    log_info "No Dangling Images"
+  fi
+}
+
+docker_remove_all_images () {
+  count_images=$(docker images -a -q $1 | wc -l)
+
+  if [ $count_images -gt 0 ]; then
+    docker rmi $(docker images -a -q)
+    log_success "Removed All Images"
+  else
+    log_info "No Images to Remove"
+  fi
+}
+
+docker_remove_stopped_containers () {
+  count_containers=$(docker ps -a -q $1 | wc -l)
+
+  if [ $count_containers -gt 0 ]; then
+    docker rm $(docker ps -a -q)
+    log_success "Removed Stopped Containers"
+  else
+    log_info "No Containers to Stop"
+  fi
+}
+
+docker_purge_all () {
+  docker_kill_running_containers
+  docker_remove_stopped_containers
+  docker_remove_all_images
+  docker volume prune -f
+}
+
+if [ "$1" == "cm" ]; then
+  check_for_git
+  git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D
+  log_success "Cleared local branches merged into $BRANCH"
+elif [ "$1" == "u" ]; then
+  check_for_git
+
+  # Update from remote
+  git fetch --all
+
+  # Update current branch
+  git pull
+  
+  # install js dependencies
+  test -e ./yarn.lock && yarn || npm i
+  
+  # install php dependencies
+  test -e ./composer.json && composer install
+
+elif [ "$1" == "dk" ]; then
+  docker_kill_running_containers
+
+elif [ "$1" == "ddi" ]; then
+  docker_remove_dangling_images
+
+elif [ "$1" == "di" ]; then
+  confirm_message "Remove all Docker Images?"
+
+  docker_remove_all_images
+
+elif [ "$1" == "drs" ]; then
+  docker_remove_stopped_containers
+
+elif [ "$1" == "dp" ]; then
+  confirm_message "Purge Docker?"
+  docker_purge_all
+
+elif [ "$1" == "fp" ]; then
+  if [ ! $2]; then
+    log_error "Must provide a port number to kill"
+    exit
+  fi;
+
+  freeport $2
+else
+  usage
+  log_error "Must provide a command see list of commands"
+fi
