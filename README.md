@@ -15,16 +15,22 @@
 I based these commands on daily workflow commands I run during development. Mostly related to Git and Docker.
 PR's are welcome.
 
-### Quick Install
-
-1. Download or clone the repo
-2. Add reference to `bash_profile`, `bashrc`, or `.zshrc`
-
 ### Setup
 
 ```
- export PATH=$PATH:handler/bin // The bin folder needs to be in your path
- alias hc='hc' // Optional had some aliases
+// Fetch the repo
+curl -LJO https://github.com/jlemm45/handler/tarball/master
+
+// Unzip
+tar -xf jlemm45-handler-*
+
+// Place in Path
+cd jlemm45-handler-*
+mv handler /usr/local/bin
+
+// Clean up
+cd ..
+rm -rf jlemm45-handler-*
 ```
 
 ### Commands

@@ -10,7 +10,7 @@ LOGO='
 '
 
 COMMANDS='
-  hc [CMD] [ARGS]
+  handler [CMD] [ARGS]
 
   Available Commands:
 
