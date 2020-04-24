@@ -45,6 +45,11 @@ rm -rf jlemm45-handler-*
   drs     Removes all stopped Docker containers
   ddi     Removes all dangling Docker images
   di      Removes all Docker images
-  fp      Kill processes running on a specific port
   dp      Purges all Docker containers, images, and volumes - Nuclear option
+
+  Misc
+  fp      Kill processes running on a specific port
+
+  AWS
+  iip     Get instance IP from name
 ```
