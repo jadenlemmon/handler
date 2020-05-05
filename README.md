@@ -47,6 +47,10 @@ rm -rf jlemm45-handler-*
   di      Removes all Docker images
   dp      Purges all Docker containers, images, and volumes - Nuclear option
 
+  Docker Compose
+  dcu     Docker compose up
+  dcd     Docker compose down
+
   Misc
   fp      Kill processes running on a specific port
 
