@@ -56,4 +56,5 @@ rm -rf jlemm45-handler-*
 
   AWS
   iip     Get instance IP from name
+  cu      Get current aws iam user
 ```

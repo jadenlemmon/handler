@@ -34,6 +34,7 @@ COMMANDS='
 
   AWS
   iip     Get instance IP from name
+  cu      Get current aws iam user
 '
 
 # Print usage
@@ -212,6 +213,9 @@ elif [ "$1" == "fp" ]; then
 elif [ "$1" == "iip" ]; then
     IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$2" --query 'Reservations[].Instances[].PublicIpAddress' --output text)
     echo $IP
+
+elif [ "$1" == "cu" ]; then
+    aws sts get-caller-identity
 
 else
   usage
