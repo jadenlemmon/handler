@@ -35,6 +35,10 @@ COMMANDS='
   AWS
   iip     Get instance IP from name
   cu      Get current aws iam user
+  skc     Set the kube config from eks cluster
+
+  K8
+  kc      Get the k8 system token for dashboard
 '
 
 # Print usage
@@ -216,6 +220,12 @@ elif [ "$1" == "iip" ]; then
 
 elif [ "$1" == "cu" ]; then
     aws sts get-caller-identity
+
+elif [ "$1" == "skc" ]; then
+    aws eks update-kubeconfig --name $2
+
+elif [ "$1" == "kc" ]; then
+    kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
 
 else
   usage
