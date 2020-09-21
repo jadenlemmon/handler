@@ -36,48 +36,45 @@ COMMANDS='
   iip     Get instance IP from name
   cu      Get current aws iam user
   skc     Set the kube config from eks cluster
-
-  K8
-  kc      Get the k8 system token for dashboard
 '
 
 # Print usage
 usage() {
   echo "$LOGO \n $COMMANDS"
-} 
+}
 
 has_arg() {
   local term="$1"
   shift
   for arg; do
-      if [[ $arg == "$term" ]]; then
-          return 0
-      fi
+    if [[ $arg == "$term" ]]; then
+      return 0
+    fi
   done
   return 1
 }
 
 if has_arg '--help' "$@"; then
-    usage
-    exit
+  usage
+  exit
 fi
 
-log_success () {
+log_success() {
   GREEN=$'\e[0;32m'
   echo "✅${GREEN} $1"
 }
 
-log_info () {
+log_info() {
   BLUE=$'\e[0;44m'
   echo "${BLUE}$1"
 }
 
-log_error () {
+log_error() {
   RED=$'\e[0;41m'
   echo "${RED}$1"
 }
 
-confirm_message () {
+confirm_message() {
   read -r -p "$1 [y/N] " response
 
   if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
@@ -86,21 +83,19 @@ confirm_message () {
   fi
 }
 
-check_for_git () {
+check_for_git() {
   if [ ! -d .git ]; then
     log_error 'Command can only be used in a GIT repository.'
     exit
-  fi;
+  fi
   BRANCH=$(git symbolic-ref --short HEAD)
 }
 
-freeport () {
+freeport() {
   log_info "Attempting to stop all processes on port $1"
   processes=($(lsof -i TCP:$1 | grep LISTEN | awk '{print $2}'))
-  if [ ${#processes[@]} -gt 0 ]
-  then
-    for i in "${processes[@]}"
-    do
+  if [ ${#processes[@]} -gt 0 ]; then
+    for i in "${processes[@]}"; do
       kill -9 $i
       log_success "Stopped $i on port :$1"
     done
@@ -109,7 +104,7 @@ freeport () {
   fi
 }
 
-docker_kill_running_containers () {
+docker_kill_running_containers() {
   count_countainers=$(docker ps -q $1 | wc -l)
 
   if [ $count_countainers -gt 0 ]; then
@@ -120,7 +115,7 @@ docker_kill_running_containers () {
   fi
 }
 
-docker_remove_dangling_images () {
+docker_remove_dangling_images() {
   count_images=$(docker images -q -f dangling=true $1 | wc -l)
 
   if [ $count_images -gt 0 ]; then
@@ -131,7 +126,7 @@ docker_remove_dangling_images () {
   fi
 }
 
-docker_remove_all_images () {
+docker_remove_all_images() {
   count_images=$(docker images -a -q $1 | wc -l)
 
   if [ $count_images -gt 0 ]; then
@@ -142,7 +137,7 @@ docker_remove_all_images () {
   fi
 }
 
-docker_remove_stopped_containers () {
+docker_remove_stopped_containers() {
   count_containers=$(docker ps -a -q $1 | wc -l)
 
   if [ $count_containers -gt 0 ]; then
@@ -153,14 +148,14 @@ docker_remove_stopped_containers () {
   fi
 }
 
-docker_purge_all () {
+docker_purge_all() {
   docker_kill_running_containers
   docker_remove_stopped_containers
   docker_remove_all_images
   docker volume prune -f
 }
 
-docker_compose_down () {
+docker_compose_down() {
   docker-compose down
 }
 
@@ -176,10 +171,10 @@ elif [ "$1" == "u" ]; then
 
   # Update current branch
   git pull
-  
+
   # install js dependencies
   test -e ./yarn.lock && yarn || npm i
-  
+
   # install php dependencies
   test -e ./composer.json && composer install
 
@@ -211,21 +206,18 @@ elif [ "$1" == "fp" ]; then
   if [ ! $2]; then
     log_error "Must provide a port number to kill"
     exit
-  fi;
+  fi
   freeport $2
 
 elif [ "$1" == "iip" ]; then
-    IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$2" --query 'Reservations[].Instances[].PublicIpAddress' --output text)
-    echo $IP
+  IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$2" --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+  echo $IP
 
 elif [ "$1" == "cu" ]; then
-    aws sts get-caller-identity
+  aws sts get-caller-identity
 
 elif [ "$1" == "skc" ]; then
-    aws eks update-kubeconfig --name $2
-
-elif [ "$1" == "kc" ]; then
-    kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
+  aws eks update-kubeconfig --name $2
 
 else
   usage
