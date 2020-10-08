@@ -48,6 +48,7 @@ rm -rf jlemm45-handler-*
   dp      Purges all Docker containers, images, and volumes - Nuclear option
 
   Docker Compose
+  dc      Docker compose
   dcu     Docker compose up
   dcd     Docker compose down
 

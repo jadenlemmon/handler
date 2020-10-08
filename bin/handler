@@ -26,6 +26,7 @@ COMMANDS='
   dp      Purges all Docker containers, images, and volumes - Nuclear option
 
   Docker Compose
+  dc      Docker compose
   dcu     Docker compose up
   dcd     Docker compose down
 
@@ -155,10 +156,6 @@ docker_purge_all() {
   docker volume prune -f
 }
 
-docker_compose_down() {
-  docker-compose down
-}
-
 if [ "$1" == "cm" ]; then
   check_for_git
   git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D
@@ -196,11 +193,14 @@ elif [ "$1" == "dp" ]; then
   confirm_message "Purge Docker?"
   docker_purge_all
 
+elif [ "$1" == "dc" ]; then
+  docker-compose "${@:2}"
+
 elif [ "$1" == "dcu" ]; then
   docker-compose up
 
 elif [ "$1" == "dcd" ]; then
-  docker_compose_down
+  docker-compose down
 
 elif [ "$1" == "fp" ]; then
   if [ ! $2]; then
