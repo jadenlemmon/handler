@@ -59,4 +59,8 @@ rm -rf jlemm45-handler-*
   iip     Get instance IP from name
   cu      Get current aws iam user
   skc     Set the kube config from eks cluster
+
+  K8
+  kc      Get current K8 context
+  kcs     Get available K8 contexts
 ```

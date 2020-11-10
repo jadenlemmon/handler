@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION='1.1.1'
+VERSION='1.2.0'
 
 LOGO='
    _   _                 _ _           
@@ -44,6 +44,10 @@ COMMANDS='
   iip     Get instance IP from name
   cu      Get current aws iam user
   skc     Set the kube config from eks cluster
+
+  K8
+  kc      Get current K8 context
+  kcs     Get available K8 contexts
 '
 
 check_for_update() {
@@ -244,6 +248,12 @@ elif [ "$1" == "cu" ]; then
 
 elif [ "$1" == "skc" ]; then
   aws eks update-kubeconfig --name $2
+
+elif [ "$1" == "kc" ]; then
+  kubectl config current-context
+
+elif [ "$1" == "kcs" ]; then
+  kubectl config get-contexts
 
 else
   usage
