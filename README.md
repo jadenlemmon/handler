@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/jlemm45/handler"><img src="./img/logo.png" width="200" alt="Logo"></a>
+  <a href="https://github.com/jadenlemmon/handler"><img src="./img/logo.png" width="200" alt="Logo"></a>
 </p>
 
 <p align="center">
@@ -19,18 +19,18 @@ PR's are welcome.
 
 ```
 // Fetch the repo
-curl -LJO https://github.com/jlemm45/handler/tarball/master
+curl -LJO https://github.com/jadenlemmon/handler/tarball/master
 
 // Unzip
-tar -xf jlemm45-handler-*
+tar -xf jadenlemmon-handler-*
 
 // Place in Path
-cd jlemm45-handler-*
+cd jadenlemmon-handler-*
 mv handler /usr/local/bin
 
 // Clean up
 cd ..
-rm -rf jlemm45-handler-*
+rm -rf jadenlemmon-handler-*
 ```
 
 ### Commands
