@@ -17,9 +17,13 @@ PR's are welcome.
 
 ### Setup
 
-```
+```bash
 // Download and extract
+// OSX
 curl -L https://github.com/jadenlemmon/handler/tarball/master | tar xvz --strip-components=2 '*handler'
+
+// Linux
+curl -L https://github.com/jadenlemmon/handler/tarball/master | tar xvz --strip-components=2 --wildcards '*handler'
 
 // Place in Path
 mv handler /usr/local/bin
@@ -27,7 +31,7 @@ mv handler /usr/local/bin
 
 ### Commands
 
-```
+```bash
   Git
   cm      Clears all local branches merged into checkout out branch
   u       Updates current branch in repo from origin and installs JS/PHP dependencies
