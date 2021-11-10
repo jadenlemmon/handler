@@ -18,19 +18,11 @@ PR's are welcome.
 ### Setup
 
 ```
-// Fetch the repo
-curl -LJO https://github.com/jadenlemmon/handler/tarball/master
-
-// Unzip
-tar -xf jadenlemmon-handler-*
+// Download and extract
+curl -L https://github.com/jadenlemmon/handler/tarball/master | tar xvz --strip-components=2 '*handler'
 
 // Place in Path
-cd jadenlemmon-handler-*
 mv handler /usr/local/bin
-
-// Clean up
-cd ..
-rm -rf jadenlemmon-handler-*
 ```
 
 ### Commands
