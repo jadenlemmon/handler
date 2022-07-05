@@ -52,17 +52,17 @@ COMMANDS='
 
 check_for_update() {
   tag_resp=$(curl -H "Accept: application/vnd.github.v3+json" \
-    -w "%{stderr}{\"status\": \"%{http_code}\", \"body\":%{stdout}}" \
+    --write-out "{\"status\": \"%{http_code}\", \"body\": \"%{stdout}\"}" \
     -s https://api.github.com/repos/jadenlemmon/handler/releases 2>&1)
 
-  status_code=$(echo $tag_resp | jq -r '.status')
+  status_code=$(echo $tag_resp | jq -r 'select(type == "object") | .status')
 
-  if [ $status_code == "200" ]; then
-    parse_json=$(echo $tag_resp | jq -r '.body[0] | {tag_name, html_url}')
-    current_tag=$(echo "$parse_json" | jq -r '.tag_name')
-    html_url=$(echo "$parse_json" | jq -r '.html_url')
+  if [[ $status_code == "200" ]]; then
+    parse_json=$(echo $tag_resp | jq -r 'select(type == "array") | .[0] | {tag_name, html_url}')
+    current_tag=$(echo $parse_json | jq -r '.tag_name')
+    html_url=$(echo $parse_json | jq -r '.html_url')
 
-    if [ $VERSION != $current_tag ]; then
+    if [[ $VERSION != $current_tag ]]; then
       echo "🍻 $current_tag is available!\nVisit $html_url to update.\n"
     fi
   fi
